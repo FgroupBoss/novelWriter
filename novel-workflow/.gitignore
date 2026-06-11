@@ -1,7 +1,6 @@
 .env
-__pycache__/
-*.pyc
-.venv/
-venv/
+backend/target/
+backend/.idea/
+*.iml
 node_modules/
 projects/*/meta/logs/

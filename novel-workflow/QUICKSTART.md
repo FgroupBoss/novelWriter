@@ -1,69 +1,43 @@
-# 快速上手（API 模式）
+# 快速上手
 
-## 1. 安装 & 配置（一次性）
-
-```powershell
-cd d:\project\demo03\novel-workflow
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r scripts\requirements.txt
-Copy-Item .env.example .env
-notepad .env   # 填 OPENAI_API_KEY、OPENAI_BASE_URL
-```
-
-## 2. 建项目 & 写创意
+## 1. 启动服务
 
 ```powershell
-Copy-Item -Recurse projects\_template projects\my_novel
-notepad projects\my_novel\00_idea.md
+cd novel-workflow
+copy .env.example .env
+
+docker compose up -d --build
 ```
 
-## 3. 启动（本机）
+浏览器打开 **http://localhost:8765**
 
-```powershell
-cd d:\project\demo03\novel-workflow
-npm install
-.\deploy.ps1
-# 或: npm start
-```
+## 2. 配置 API（Web 设置页）
 
-浏览器 **http://127.0.0.1:8765** → 选择 `demo_novel` → **试运行**
+在 **设置** 中填写并保存（写入 MySQL `nw_settings` 表）：
 
-1. 点击 **+** 新建项目（或选择已有项目）
-2. 在 **文件** tab 编辑 `00_idea.md`
-3. 在 **工作流** tab 点击 **「Idea → 第 1 章」** 一键启动
+- **API Key**
+- **Base URL**（如 `https://api.deepseek.com/v1`）
+- **Model**（如 `deepseek-chat`）
 
-或命令行：
+## 3. 使用 Web 控制台
 
-```powershell
-python run_pipeline.py --project my_novel --quickstart
-```
+1. 选择 **demo_novel** 或点击 **+** 新建项目
+2. 在 **文件** 页编辑 `00_idea.md`（填写一句话梗概）
+3. 在 **工作流** 页点击 **试运行** 检查各阶段上下文是否就绪
+4. 点击 **Idea → 第 1 章** 一键启动
 
-## 4. 命令行（可选）
+## 常用操作
 
-```powershell
+| 需求 | Web 操作 |
+|------|----------|
+| 预览 token 体量 | 工作流 → 选择阶段 → 查看上下文预览 |
+| 试运行 | 工作流 → 「试运行」 |
+| 跑全部设定 | 工作流 → 「运行设定」 |
+| 写单章 | 章节 → 输入章号 → 「运行本章」 |
+| 重跑某设定阶段 | 工作流 → 点击对应阶段 → 「运行此阶段」 |
 
-```powershell
-python run_chapter.py --project my_novel --range 2 5
-```
+## Token 节约口诀
 
-## 常用命令
+摘要进 `meta/summaries/`，章间用 `*_summary.md`，后端按 `stages.yaml` 自动组装最小上下文并保持前缀缓存友好顺序。
 
-| 需求 | 命令 / 操作 |
-|------|------|
-| **可视化操作** | `python run_web.py` → 浏览器 |
-| 只跑设定 | Web 工作流页 / `run_setup.py` |
-| 单章 | `python run_chapter.py -p my_novel -c 3` |
-| 预览 token | `python build_context.py -p my_novel -s chapter_write -c 3 --stats-only` |
-| **试运行** | Web 点「试运行」/ `python run_dry_run.py -p my_novel` |
-| 重跑某设定 | `python run_stage.py -p my_novel -s main_outline` |
-
-## DeepSeek 示例
-
-```env
-OPENAI_API_KEY=sk-...
-OPENAI_BASE_URL=https://api.deepseek.com/v1
-NOVEL_LLM_MODEL=deepseek-chat
-```
-
-**Token 节约口诀**：摘要进 `meta/summaries/`，章间用 `*_summary.md`，脚本按 `stages.yaml` 自动组装最小上下文。
+更多细节见 [WORKFLOW.md](./WORKFLOW.md) 与 [DOCKER.md](./DOCKER.md)。
