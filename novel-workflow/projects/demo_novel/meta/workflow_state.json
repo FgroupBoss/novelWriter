@@ -1,0 +1,50 @@
+{
+  "novel_id": "demo_novel",
+  "title": "末代符师",
+  "current_stage": "chapter_review",
+  "completed_stages": [
+    "era_setting",
+    "characters",
+    "worldview",
+    "relationships",
+    "main_outline",
+    "sub_outline",
+    "foreshadowing",
+    "material_library",
+    "style_guide",
+    "timeline",
+    "themes_symbols",
+    "pacing_notes",
+    "context_index",
+    "chapter_review"
+  ],
+  "current_chapter": 3,
+  "target_chapters": 80,
+  "volumes": {
+    "1": {
+      "name": "卷一",
+      "chapter_start": 1,
+      "chapter_end": 20,
+      "chapters_done": 3
+    },
+    "2": {
+      "name": "卷二",
+      "chapter_start": 21,
+      "chapter_end": 40,
+      "chapters_done": 0
+    },
+    "3": {
+      "name": "卷三",
+      "chapter_start": 41,
+      "chapter_end": 60,
+      "chapters_done": 0
+    },
+    "4": {
+      "name": "卷四",
+      "chapter_start": 61,
+      "chapter_end": 80,
+      "chapters_done": 0
+    }
+  },
+  "last_updated": "2026-06-11T06:31:03Z"
+}

@@ -1,0 +1,181 @@
+# 阶段定义：上下文文件、Prompt、输出路径
+# 路径均相对于 projects/{novel_id}/
+
+stages:
+  era_setting:
+    prompt: "01_era_setting.md"
+    context: ["00_idea.md"]
+    outputs: ["01_era_setting.md", "meta/summaries/era_summary.md"]
+
+  characters:
+    prompt: "02_characters.md"
+    context:
+      - "00_idea.md"
+      - "01_era_setting.md"
+      - "meta/summaries/era_summary.md"
+    outputs: ["02_characters.md", "meta/summaries/characters_summary.md"]
+
+  worldview:
+    prompt: "03_worldview.md"
+    context:
+      - "00_idea.md"
+      - "meta/summaries/era_summary.md"
+      - "meta/summaries/characters_summary.md"
+      - "02_characters.md"
+    outputs: ["03_worldview.md", "meta/summaries/worldview_summary.md"]
+
+  relationships:
+    prompt: "04_relationships.md"
+    context:
+      - "meta/summaries/characters_summary.md"
+      - "meta/summaries/worldview_summary.md"
+      - "02_characters.md"
+      - "03_worldview.md"
+    outputs: ["04_relationships.md", "meta/summaries/relationships_summary.md"]
+
+  main_outline:
+    prompt: "05_main_outline.md"
+    context:
+      - "00_idea.md"
+      - "meta/summaries/era_summary.md"
+      - "meta/summaries/characters_summary.md"
+      - "meta/summaries/worldview_summary.md"
+      - "meta/summaries/relationships_summary.md"
+      - "04_relationships.md"
+    outputs: ["05_main_outline.md", "meta/summaries/main_outline_summary.md"]
+
+  sub_outline:
+    prompt: "06_sub_outline.md"
+    context:
+      - "05_main_outline.md"
+      - "meta/summaries/characters_summary.md"
+      - "meta/summaries/relationships_summary.md"
+    outputs: ["06_sub_outline.md"]
+
+  foreshadowing:
+    prompt: "07_foreshadowing.md"
+    context:
+      - "05_main_outline.md"
+      - "06_sub_outline.md"
+      - "meta/summaries/main_outline_summary.md"
+    outputs: ["07_foreshadowing.md"]
+
+  material_library:
+    prompt: "08_material_library.md"
+    context:
+      - "meta/summaries/era_summary.md"
+      - "meta/summaries/characters_summary.md"
+      - "meta/summaries/worldview_summary.md"
+      - "05_main_outline.md"
+      - "07_foreshadowing.md"
+    outputs: ["08_material_library.md"]
+
+  style_guide:
+    prompt: "11_style_guide_gen.md"
+    context:
+      - "00_idea.md"
+      - "01_era_setting.md"
+      - "02_characters.md"
+      - "meta/summaries/worldview_summary.md"
+    outputs: ["11_style_guide.md"]
+
+  timeline:
+    prompt: "12_timeline_gen.md"
+    context:
+      - "05_main_outline.md"
+      - "06_sub_outline.md"
+      - "01_era_setting.md"
+    outputs: ["12_timeline.md"]
+
+  themes_symbols:
+    prompt: "13_themes_symbols.md"
+    context:
+      - "00_idea.md"
+      - "05_main_outline.md"
+      - "08_material_library.md"
+    outputs: ["13_themes_symbols.md"]
+
+  pacing_notes:
+    prompt: "14_pacing_notes.md"
+    context:
+      - "05_main_outline.md"
+      - "06_sub_outline.md"
+    outputs: ["14_pacing_notes.md"]
+
+  context_index:
+    prompt: "16_update_context_index.md"
+    context:
+      - "meta/context_index.md"
+      - "meta/workflow_state.json"
+    outputs: ["meta/context_index.md"]
+
+# 正文相关阶段（需 chapter 参数）
+chapter_stages:
+  chapter_write:
+    prompt: "09_chapter_write.md"
+    context:
+      - "11_style_guide.md"
+      - "meta/summaries/era_summary.md"
+      - "meta/summaries/characters_summary.md"
+      - "meta/summaries/worldview_summary.md"
+      - "meta/summaries/relationships_summary.md"
+      - "meta/summaries/main_outline_summary.md"
+      - "10_plot_progress.md"
+      - "07_foreshadowing.md"
+      - "12_timeline.md"
+      - "13_themes_symbols.md"
+      - "14_pacing_notes.md"
+      - "05_main_outline.md"
+      - "06_sub_outline.md"
+      - "08_material_library.md"
+    context_if_chapter_gt_1:
+      - "09_chapters/ch{prev:03d}_summary.md"
+    outputs:
+      - "09_chapters/ch{chapter:03d}.md"
+      - "09_chapters/ch{chapter:03d}_summary.md"
+
+  plot_update:
+    prompt: "10_plot_update.md"
+    context:
+      - "09_chapters/ch{chapter:03d}.md"
+      - "09_chapters/ch{chapter:03d}_summary.md"
+      - "10_plot_progress.md"
+      - "07_foreshadowing.md"
+      - "12_timeline.md"
+      - "05_main_outline.md"
+    outputs:
+      - "10_plot_progress.md"
+      - "07_foreshadowing.md"
+      - "12_timeline.md"
+
+  chapter_review:
+    prompt: "15_chapter_review.md"
+    context:
+      - "09_chapters/ch{chapter:03d}.md"
+      - "10_plot_progress.md"
+      - "07_foreshadowing.md"
+      - "12_timeline.md"
+      - "05_main_outline.md"
+      - "11_style_guide.md"
+    outputs:
+      - "09_chapters/ch{chapter:03d}_review.md"
+
+setup_order:
+  - era_setting
+  - characters
+  - worldview
+  - relationships
+  - main_outline
+  - sub_outline
+  - foreshadowing
+  - material_library
+  - style_guide
+  - timeline
+  - themes_symbols
+  - pacing_notes
+  - context_index
+
+chapter_loop:
+  - chapter_write
+  - plot_update
+  - chapter_review

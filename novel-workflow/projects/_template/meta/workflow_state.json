@@ -1,0 +1,16 @@
+{
+  "novel_id": "_template",
+  "title": "",
+  "created_at": "",
+  "current_stage": "idea",
+  "completed_stages": [],
+  "current_chapter": 0,
+  "target_chapters": 80,
+  "volumes": {
+    "1": { "name": "", "chapter_start": 1, "chapter_end": 20, "chapters_done": 0 },
+    "2": { "name": "", "chapter_start": 21, "chapter_end": 40, "chapters_done": 0 },
+    "3": { "name": "", "chapter_start": 41, "chapter_end": 60, "chapters_done": 0 },
+    "4": { "name": "", "chapter_start": 61, "chapter_end": 80, "chapters_done": 0 }
+  },
+  "last_updated": ""
+}

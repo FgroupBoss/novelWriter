@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小说 Prompt 工作流</title>
+  <link rel="stylesheet" href="/static/css/app.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-icon">📖</span>
+        <div>
+          <h1>小说工作流</h1>
+          <p>长篇 · API · 文件缓存</p>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-head">
+          <span>我的小说</span>
+          <button id="btn-new-project" class="btn-icon" title="新建小说">+</button>
+        </div>
+        <ul id="project-list" class="project-list"></ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div id="api-status" class="api-status">检测 API…</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h2 id="page-title">选择或新建小说</h2>
+        <nav class="tabs">
+          <button class="tab active" data-tab="workflow">工作流</button>
+          <button class="tab" data-tab="files">文件</button>
+          <button class="tab" data-tab="jobs">任务</button>
+          <button class="tab" data-tab="settings">设置</button>
+        </nav>
+      </header>
+
+      <div id="empty-state" class="empty-state">
+        <p>← 从左侧选择小说，或点击 + 新建</p>
+      </div>
+
+      <div id="panel-workflow" class="panel hidden">
+        <!-- 小说概览 -->
+        <section class="card novel-header">
+          <div class="novel-header-top">
+            <div>
+              <h3 id="novel-title">—</h3>
+              <p id="novel-subtitle" class="hint">—</p>
+            </div>
+            <button id="btn-quickstart" class="btn quickstart-btn">Idea → 第 1 章</button>
+          </div>
+          <div class="novel-progress-wrap">
+            <div class="progress-labels">
+              <span>设定 <strong id="prog-setup">0/13</strong></span>
+              <span>正文 <strong id="prog-chapter">0/80</strong></span>
+            </div>
+            <div class="progress-bar dual">
+              <div id="bar-setup" class="bar-seg setup" style="width:0%"></div>
+              <div id="bar-chapter" class="bar-seg chapter" style="width:0%"></div>
+            </div>
+          </div>
+          <p id="idea-check-msg" class="idea-check-msg"></p>
+        </section>
+
+        <!-- 创意 -->
+        <section class="card idea-card">
+          <div class="section-head">
+            <h3>创意 Idea</h3>
+            <div>
+              <button id="btn-save-idea" class="btn primary">保存创意</button>
+              <button id="btn-edit-idea-file" class="btn secondary">在文件页编辑</button>
+            </div>
+          </div>
+          <p class="hint">填写「一句话梗概」和核心冲突，这是一切设定的起点。</p>
+          <textarea id="idea-editor" spellcheck="false" placeholder="在此填写小说创意…"></textarea>
+        </section>
+
+        <!-- 设定阶段节点图 -->
+        <section class="card">
+          <div class="section-head">
+            <h3>设定阶段</h3>
+            <button id="btn-run-all-setup" class="btn primary">运行全部设定</button>
+          </div>
+          <p class="hint">点击节点查看详情与上下文；绿色表示已完成，橙色为当前可运行。</p>
+          <div id="setup-pipeline" class="pipeline-graph"></div>
+        </section>
+
+        <!-- 正文写作 -->
+        <section class="card chapter-card">
+          <h3>正文写作</h3>
+          <div class="chapter-layout">
+            <div class="chapter-picker">
+              <label class="chapter-label">当前章节</label>
+              <div class="chapter-stepper">
+                <button type="button" id="btn-ch-dec" class="btn stepper-btn">−</button>
+                <input type="number" id="chapter-num" min="1" value="1" />
+                <button type="button" id="btn-ch-inc" class="btn stepper-btn">+</button>
+              </div>
+              <div class="chapter-range">
+                <label>批量至第
+                  <input type="number" id="chapter-end" min="1" placeholder="可选" />
+                </label>
+              </div>
+              <div class="chapter-progress-mini">
+                <div id="chapter-bar" class="mini-bar"><div id="chapter-bar-fill"></div></div>
+                <span id="chapter-progress-text">0 / 80 章</span>
+              </div>
+            </div>
+            <div class="chapter-flow">
+              <div class="flow-steps">
+                <div class="flow-step" data-stage="chapter_write">
+                  <span class="flow-num">1</span>
+                  <span class="flow-label">撰写正文</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step" data-stage="plot_update">
+                  <span class="flow-num">2</span>
+                  <span class="flow-label">更新剧情</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step" data-stage="chapter_review">
+                  <span class="flow-num">3</span>
+                  <span class="flow-label">章节校验</span>
+                </div>
+              </div>
+              <div class="chapter-actions">
+                <button id="btn-run-chapter" class="btn primary large">运行本章（写 → 更新 → 校验）</button>
+              </div>
+              <details class="advanced-options">
+                <summary>高级选项</summary>
+                <div class="pipeline-options">
+                  <button id="btn-run-pipeline" class="btn secondary">流水线（设定 + 写章）</button>
+                  <label class="check"><input type="checkbox" id="pipeline-setup-only" /> 仅设定</label>
+                  <label class="check"><input type="checkbox" id="pipeline-skip-setup" /> 跳过设定</label>
+                  <label>章节范围 <input type="text" id="pipeline-chapters" value="1" placeholder="1 或 1-5" /></label>
+                </div>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <!-- 上下文预览 -->
+        <section class="card">
+          <h3>上下文预览</h3>
+          <div class="preview-controls">
+            <select id="preview-stage"></select>
+            <input type="number" id="preview-chapter" min="1" placeholder="章号" class="hidden" />
+            <button id="btn-preview-context" class="btn secondary">预览</button>
+          </div>
+          <div id="preview-result" class="preview-panel">
+            <p class="hint">选择阶段后点击预览，查看上下文文件就绪状态与 Token 体量估算。</p>
+          </div>
+        </section>
+      </div>
+
+      <div id="panel-files" class="panel hidden">
+        <div class="files-layout">
+          <ul id="file-tree" class="file-tree"></ul>
+          <div class="file-editor">
+            <div class="file-editor-head">
+              <span id="current-file-path">未选择文件</span>
+              <button id="btn-save-file" class="btn primary" disabled>保存</button>
+            </div>
+            <textarea id="file-content" spellcheck="false" placeholder="选择左侧文件进行查看或编辑…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-jobs" class="panel hidden">
+        <section class="card">
+          <div class="section-head">
+            <h3>任务列表</h3>
+            <button id="btn-refresh-jobs" class="btn secondary">刷新</button>
+          </div>
+          <div id="job-list" class="job-list"></div>
+        </section>
+        <section class="card">
+          <div class="section-head">
+            <h3>任务日志</h3>
+            <button id="btn-delete-job" class="btn danger hidden">删除任务</button>
+          </div>
+          <pre id="job-logs" class="log-box">选择任务查看日志</pre>
+        </section>
+      </div>
+
+      <div id="panel-settings" class="panel hidden">
+        <section class="card">
+          <h3>API 配置</h3>
+          <p class="hint">保存至项目根目录 <code>.env</code>，立即生效。密钥仅保存在本机，不会上传。</p>
+          <div class="settings-form">
+            <label>API Base URL
+              <input type="url" id="settings-base-url" placeholder="https://api.openai.com/v1" />
+            </label>
+            <label>模型名称
+              <input type="text" id="settings-model" placeholder="gpt-4o / deepseek-chat" />
+            </label>
+            <label>API Key
+              <input type="password" id="settings-api-key" autocomplete="off" />
+            </label>
+          </div>
+          <div class="action-row">
+            <button id="btn-save-settings" class="btn primary">保存配置</button>
+          </div>
+          <p class="hint">DeepSeek 示例：Base URL 填 <code>https://api.deepseek.com/v1</code>，模型填 <code>deepseek-chat</code></p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- 新建小说 -->
+  <dialog id="dialog-new-project">
+    <form method="dialog" id="form-new-project">
+      <h3>新建小说</h3>
+      <label>小说 ID（英文/数字/下划线）
+        <input name="id" required pattern="[a-zA-Z0-9_-]+" placeholder="my_novel" />
+      </label>
+      <label>书名（可选）
+        <input name="title" placeholder="我的长篇小说" />
+      </label>
+      <div class="dialog-actions">
+        <button type="button" class="btn secondary" id="btn-cancel-project">取消</button>
+        <button type="submit" class="btn primary">创建</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- 设定阶段详情 -->
+  <dialog id="dialog-stage-detail" class="stage-dialog">
+    <div class="stage-dialog-head">
+      <h3 id="stage-detail-title">阶段详情</h3>
+      <button type="button" id="btn-close-stage" class="btn-icon-light">×</button>
+    </div>
+    <div id="stage-detail-body" class="stage-dialog-body"></div>
+    <div class="stage-dialog-actions">
+      <button id="btn-run-stage-from-drawer" class="btn primary">运行此阶段</button>
+      <button id="btn-preview-stage-from-drawer" class="btn secondary">预览上下文</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+{
+  "project_id": "demo_novel",
+  "idea_ready": true,
+  "idea_message": "创意已填写",
+  "stages": [
+    {
+      "stage": "era_setting",
+      "label": "时代设定",
+      "chapter": null,
+      "ready": true,
+      "context_files": [
+        "00_idea.md"
+      ],
+      "output_files": [
+        "01_era_setting.md",
+        "meta/summaries/era_summary.md"
+      ],
+      "context_chars": 375,
+      "total_chars": 1433
+    },
+    {
+      "stage": "characters",
+      "label": "角色设定",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "01_era_setting.md",
+        "meta/summaries/era_summary.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 01_era_setting.md\n  - meta/summaries/era_summary.md"
+    },
+    {
+      "stage": "worldview",
+      "label": "世界观",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "meta/summaries/era_summary.md",
+        "meta/summaries/characters_summary.md",
+        "02_characters.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - meta/summaries/era_summary.md\n  - meta/summaries/characters_summary.md\n  - 02_characters.md"
+    },
+    {
+      "stage": "relationships",
+      "label": "关系网",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "meta/summaries/characters_summary.md",
+        "meta/summaries/worldview_summary.md",
+        "02_characters.md",
+        "03_worldview.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - meta/summaries/characters_summary.md\n  - meta/summaries/worldview_summary.md\n  - 02_characters.md\n  - 03_worldview.md"
+    },
+    {
+      "stage": "main_outline",
+      "label": "主线大纲",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "meta/summaries/era_summary.md",
+        "meta/summaries/characters_summary.md",
+        "meta/summaries/worldview_summary.md",
+        "meta/summaries/relationships_summary.md",
+        "04_relationships.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - meta/summaries/era_summary.md\n  - meta/summaries/characters_summary.md\n  - meta/summaries/worldview_summary.md\n  - meta/summaries/relationships_summary.md\n  - 04_relationships.md"
+    },
+    {
+      "stage": "sub_outline",
+      "label": "支线大纲",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "05_main_outline.md",
+        "meta/summaries/characters_summary.md",
+        "meta/summaries/relationships_summary.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 05_main_outline.md\n  - meta/summaries/characters_summary.md\n  - meta/summaries/relationships_summary.md"
+    },
+    {
+      "stage": "foreshadowing",
+      "label": "伏笔与回收",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "05_main_outline.md",
+        "06_sub_outline.md",
+        "meta/summaries/main_outline_summary.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 05_main_outline.md\n  - 06_sub_outline.md\n  - meta/summaries/main_outline_summary.md"
+    },
+    {
+      "stage": "material_library",
+      "label": "素材库",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "meta/summaries/era_summary.md",
+        "meta/summaries/characters_summary.md",
+        "meta/summaries/worldview_summary.md",
+        "05_main_outline.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - meta/summaries/era_summary.md\n  - meta/summaries/characters_summary.md\n  - meta/summaries/worldview_summary.md\n  - 05_main_outline.md"
+    },
+    {
+      "stage": "style_guide",
+      "label": "文风指南",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "01_era_setting.md",
+        "02_characters.md",
+        "meta/summaries/worldview_summary.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 01_era_setting.md\n  - 02_characters.md\n  - meta/summaries/worldview_summary.md"
+    },
+    {
+      "stage": "timeline",
+      "label": "时间线",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "05_main_outline.md",
+        "06_sub_outline.md",
+        "01_era_setting.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 05_main_outline.md\n  - 06_sub_outline.md\n  - 01_era_setting.md"
+    },
+    {
+      "stage": "themes_symbols",
+      "label": "主题象征",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "05_main_outline.md",
+        "08_material_library.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 05_main_outline.md\n  - 08_material_library.md"
+    },
+    {
+      "stage": "pacing_notes",
+      "label": "节奏说明",
+      "chapter": null,
+      "ready": false,
+      "blocked_by": [
+        "05_main_outline.md",
+        "06_sub_outline.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 05_main_outline.md\n  - 06_sub_outline.md"
+    },
+    {
+      "stage": "context_index",
+      "label": "上下文索引",
+      "chapter": null,
+      "ready": true,
+      "context_files": [
+        "meta/context_index.md",
+        "meta/workflow_state.json"
+      ],
+      "output_files": [
+        "meta/context_index.md"
+      ],
+      "context_chars": 1201,
+      "total_chars": 2382
+    },
+    {
+      "stage": "chapter_write",
+      "label": "第1章 · 撰写正文",
+      "chapter": 1,
+      "ready": false,
+      "blocked_by": [
+        "11_style_guide.md",
+        "meta/summaries/era_summary.md",
+        "meta/summaries/characters_summary.md",
+        "meta/summaries/worldview_summary.md",
+        "meta/summaries/relationships_summary.md",
+        "meta/summaries/main_outline_summary.md",
+        "12_timeline.md",
+        "13_themes_symbols.md",
+        "14_pacing_notes.md",
+        "05_main_outline.md",
+        "06_sub_outline.md",
+        "08_material_library.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 11_style_guide.md\n  - meta/summaries/era_summary.md\n  - meta/summaries/characters_summary.md\n  - meta/summaries/worldview_summary.md\n  - meta/summaries/relationships_summary.md\n  - meta/summaries/main_outline_summary.md\n  - 12_timeline.md\n  - 13_themes_symbols.md\n  - 14_pacing_notes.md\n  - 05_main_outline.md\n  - 06_sub_outline.md\n  - 08_material_library.md"
+    },
+    {
+      "stage": "plot_update",
+      "label": "第1章 · 更新剧情",
+      "chapter": 1,
+      "ready": false,
+      "blocked_by": [
+        "09_chapters/ch001.md",
+        "09_chapters/ch001_summary.md",
+        "12_timeline.md",
+        "05_main_outline.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 09_chapters/ch001.md\n  - 09_chapters/ch001_summary.md\n  - 12_timeline.md\n  - 05_main_outline.md"
+    },
+    {
+      "stage": "chapter_review",
+      "label": "第1章 · 章节校验",
+      "chapter": 1,
+      "ready": false,
+      "blocked_by": [
+        "09_chapters/ch001.md",
+        "12_timeline.md",
+        "05_main_outline.md",
+        "11_style_guide.md"
+      ],
+      "error": "以下上下文文件缺失或尚未生成，请先完成前置阶段:\n  - 09_chapters/ch001.md\n  - 12_timeline.md\n  - 05_main_outline.md\n  - 11_style_guide.md"
+    }
+  ],
+  "summary": {
+    "runnable_stages": 2,
+    "total_stages": 16,
+    "runnable_prompt_chars": 3815,
+    "note": "仅统计当前可运行阶段的 prompt 字符；前置未生成时后续阶段会 blocked。"
+  }
+}
