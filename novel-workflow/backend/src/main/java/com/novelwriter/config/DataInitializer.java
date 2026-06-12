@@ -3,6 +3,7 @@ package com.novelwriter.config;
 import com.novelwriter.mapper.ProjectMapper;
 import com.novelwriter.service.DocumentService;
 import com.novelwriter.service.PromptRecordService;
+import com.novelwriter.service.NovelConfigService;
 import com.novelwriter.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class DataInitializer implements ApplicationRunner {
     private final ProjectService projectService;
     private final DocumentService documentService;
     private final PromptRecordService promptRecordService;
+    private final NovelConfigService novelConfigService;
 
     @Value("${novel.import-demo-path:}")
     private String importDemoPath;
@@ -70,6 +72,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private void backfillAllProjects() {
         try {
+            novelConfigService.backfillAllProjects();
             for (com.novelwriter.model.entity.ProjectEntity p : projectMapper.selectList(null)) {
                 if (p.getId().startsWith("_")) {
                     continue;

@@ -54,7 +54,7 @@ DeepSeek 示例（在 Web 设置页填写）：
 
 ## Token / 前缀缓存优化
 
-后端完整移植 Python `context.py` 策略：
+后端 `ContextAssemblyService` 实现以下策略：
 
 - `SETUP_CONTEXT_ORDER` / `CHAPTER_CONTEXT_CORE` 固定槽位顺序
 - 用户消息结构：**上下文块 → 任务指令 → 输出模板**（动态内容置后）

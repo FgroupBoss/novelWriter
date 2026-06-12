@@ -16,6 +16,24 @@ public class ProjectEntity {
 
     private String title;
 
+    /** 写作语言，如 zh-CN */
+    private String language;
+
+    /** 篇幅规模：short / medium / long */
+    private String scale;
+
+    private Integer targetChapters;
+
+    private Integer chaptersPerVolume;
+
+    private Integer wordsPerChapter;
+
+    private Integer summaryMaxChars;
+
+    private Integer plotProgressMaxChars;
+
+    private Integer prevChapterSummaryChars;
+
     private String currentStage;
 
     private Integer currentChapter;

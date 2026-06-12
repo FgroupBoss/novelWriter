@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 项目 CRUD，与 Python projects.py 对齐。
+ * 项目 CRUD。
  */
 @Service
 @RequiredArgsConstructor
@@ -35,11 +35,11 @@ public class ProjectService {
     private final StageConfigService stageConfigService;
     private final ObjectMapper objectMapper;
     private final PromptRecordService promptRecordService;
+    private final NovelConfigService novelConfigService;
 
     public List<Map<String, Object>> listProjects() {
         List<ProjectEntity> projects = projectMapper.selectList(null);
         List<String> setupOrder = stageConfigService.getSetupOrder();
-        int targetChapters = stageConfigService.getTargetChapters();
         List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
 
         for (ProjectEntity p : projects) {
@@ -63,7 +63,8 @@ public class ProjectService {
             item.put("completed_stages", completed);
             item.put("setup_done", setupDone);
             item.put("setup_total", setupOrder.size());
-            item.put("target_chapters", targetChapters);
+            item.put("target_chapters", novelConfigService.getTargetChapters(p));
+            item.put("novel_config", novelConfigService.toMap(p));
             items.add(item);
         }
         return items;
@@ -79,6 +80,7 @@ public class ProjectService {
         ProjectEntity project = new ProjectEntity();
         project.setId(projectId);
         project.setTitle(title != null ? title : projectId);
+        novelConfigService.applyDefaults(project);
         project.setCurrentStage("idea");
         project.setCurrentChapter(0);
         project.setCreatedAt(LocalDateTime.now());
@@ -98,6 +100,7 @@ public class ProjectService {
             project.setTitle(title);
             projectMapper.updateById(project);
         }
+        novelConfigService.syncWorkflowStateForProject(projectId);
 
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         result.put("id", projectId);
@@ -146,7 +149,8 @@ public class ProjectService {
         detail.put("setup_progress", setupProgress);
         detail.put("setup_done", setupDone);
         detail.put("setup_total", setupProgress.size());
-        detail.put("target_chapters", stageConfigService.getTargetChapters());
+        detail.put("target_chapters", novelConfigService.getTargetChapters(project));
+        detail.put("novel_config", novelConfigService.toMap(project));
         detail.put("chapter_loop", chapterLoop);
         return detail;
     }
@@ -182,6 +186,7 @@ public class ProjectService {
         ProjectEntity project = new ProjectEntity();
         project.setId(projectId);
         project.setTitle(projectId);
+        novelConfigService.applyDefaults(project);
         project.setCurrentStage("idea");
         project.setCurrentChapter(0);
         project.setCreatedAt(LocalDateTime.now());
@@ -200,6 +205,9 @@ public class ProjectService {
         if (state.get("current_chapter") instanceof Number) {
             project.setCurrentChapter(((Number) state.get("current_chapter")).intValue());
         }
+        if (state.get("target_chapters") instanceof Number) {
+            project.setTargetChapters(((Number) state.get("target_chapters")).intValue());
+        }
         try {
             project.setStateJson(objectMapper.writeValueAsString(state));
             project.setCompletedStages(objectMapper.writeValueAsString(
@@ -207,6 +215,7 @@ public class ProjectService {
         } catch (Exception ignored) {
         }
         projectMapper.updateById(project);
+        novelConfigService.syncWorkflowStateForProject(projectId);
     }
 
     private void importDirectory(java.io.File dir, String projectId, String prefix) throws IOException {

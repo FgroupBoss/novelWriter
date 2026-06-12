@@ -68,6 +68,45 @@
           <p id="idea-check-msg" class="idea-check-msg"></p>
         </section>
 
+        <!-- 小说参数（按项目存库） -->
+        <section class="card novel-config-card">
+          <div class="section-head">
+            <h3>小说参数</h3>
+            <button id="btn-save-novel-config" class="btn primary" type="button">保存参数</button>
+          </div>
+          <p class="hint">目标章数、分卷与上下文截断长度等，按当前小说独立保存。</p>
+          <div class="novel-config-grid">
+            <label>语言
+              <input type="text" id="nc-language" placeholder="zh-CN" />
+            </label>
+            <label>篇幅
+              <select id="nc-scale">
+                <option value="short">短篇 short</option>
+                <option value="medium">中篇 medium</option>
+                <option value="long">长篇 long</option>
+              </select>
+            </label>
+            <label>目标章数
+              <input type="number" id="nc-target-chapters" min="1" max="9999" />
+            </label>
+            <label>每卷章数
+              <input type="number" id="nc-chapters-per-volume" min="1" max="500" />
+            </label>
+            <label>每章字数
+              <input type="number" id="nc-words-per-chapter" min="500" max="50000" step="100" />
+            </label>
+            <label>摘要上限（字）
+              <input type="number" id="nc-summary-max-chars" min="100" max="5000" />
+            </label>
+            <label>剧情进度上限（字）
+              <input type="number" id="nc-plot-progress-max-chars" min="500" max="50000" />
+            </label>
+            <label>上章摘要上限（字）
+              <input type="number" id="nc-prev-chapter-summary-chars" min="100" max="5000" />
+            </label>
+          </div>
+        </section>
+
         <!-- 创意 -->
         <section class="card idea-card">
           <div class="section-head">

@@ -59,7 +59,7 @@ public class DocumentService {
     }
 
     /**
-     * 读取项目文件，过滤占位内容（与 Python read_project_file 对齐）。
+     * 读取项目文件，过滤占位内容。
      */
     public String readProjectFile(String projectId, String relPath) {
         String text = readContent(projectId, relPath);

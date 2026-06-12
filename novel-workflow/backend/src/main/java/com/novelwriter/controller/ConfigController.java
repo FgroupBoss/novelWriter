@@ -32,8 +32,6 @@ public class ConfigController {
     @GetMapping("/config")
     public Map<String, Object> config() {
         SettingsService.LlmSettings llm = settingsService.getEffectiveSettings();
-        Map<String, Object> novel = new LinkedHashMap<String, Object>();
-        novel.put("target_chapters", stageConfigService.getTargetChapters());
 
         Map<String, Object> api = new LinkedHashMap<String, Object>();
         api.put("model", llm.getModel());
@@ -42,7 +40,7 @@ public class ConfigController {
         api.put("api_key_masked", settingsService.maskApiKey(llm.getApiKey()));
 
         Map<String, Object> result = new LinkedHashMap<String, Object>();
-        result.put("novel", novel);
+        result.put("default_novel", stageConfigService.getDefaultNovelConfig());
         result.put("api", api);
         result.put("setup_order", stageConfigService.getSetupOrder());
         result.put("stage_labels", StageConfigService.STAGE_LABELS);

@@ -20,7 +20,6 @@ import java.util.Set;
 
 /**
  * 按阶段组装最小上下文（DeepSeek 等前缀缓存友好）。
- * 与 Python context.py 1:1 对齐，确保 prefix cache 命中率。
  */
 @Service
 @RequiredArgsConstructor

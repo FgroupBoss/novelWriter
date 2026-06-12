@@ -2,7 +2,7 @@ package com.novelwriter.controller;
 
 import com.novelwriter.service.DocumentService;
 import com.novelwriter.service.DryRunService;
-import com.novelwriter.service.PromptRecordService;
+import com.novelwriter.service.NovelConfigService;
 import com.novelwriter.service.ProjectService;
 import com.novelwriter.service.WorkflowStateService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ public class ProjectController {
     private final DocumentService documentService;
     private final DryRunService dryRunService;
     private final WorkflowStateService workflowStateService;
+    private final NovelConfigService novelConfigService;
 
     @GetMapping
     public List<Map<String, Object>> listProjects() {
@@ -45,6 +45,18 @@ public class ProjectController {
     @GetMapping("/{id}")
     public Map<String, Object> getProject(@PathVariable String id) {
         return projectService.getProjectDetail(id);
+    }
+
+    @GetMapping("/{id}/novel-config")
+    public Map<String, Object> getNovelConfig(@PathVariable String id) {
+        return novelConfigService.getNovelConfig(id);
+    }
+
+    @PutMapping("/{id}/novel-config")
+    public Map<String, Object> updateNovelConfig(
+            @PathVariable String id,
+            @RequestBody Map<String, Object> body) {
+        return novelConfigService.updateNovelConfig(id, body);
     }
 
     @GetMapping("/{id}/context-preview")

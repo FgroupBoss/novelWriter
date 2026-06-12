@@ -114,7 +114,8 @@ function updateNovelHeader(detail) {
   const setupDone = detail.setup_done ?? detail.setup_progress.filter((s) => s.done).length;
   const setupTotal = detail.setup_total ?? detail.setup_progress.length;
   const chDone = detail.state.current_chapter || 0;
-  const chTotal = detail.target_chapters || 80;
+  const nc = detail.novel_config || {};
+  const chTotal = detail.target_chapters || nc.target_chapters || 80;
 
   $("#prog-setup").textContent = `${setupDone}/${setupTotal}`;
   $("#prog-chapter").textContent = `${chDone}/${chTotal}`;
@@ -129,6 +130,49 @@ function updateNovelHeader(detail) {
   const nextCh = Math.max(1, chDone + 1);
   if (parseInt($("#chapter-num").value, 10) < 1) {
     $("#chapter-num").value = nextCh;
+  }
+  fillNovelConfigForm(nc);
+}
+
+function fillNovelConfigForm(nc) {
+  const defaults = (config && config.default_novel) || {};
+  const c = { ...defaults, ...nc };
+  $("#nc-language").value = c.language || "zh-CN";
+  $("#nc-scale").value = c.scale || "long";
+  $("#nc-target-chapters").value = c.target_chapters ?? 80;
+  $("#nc-chapters-per-volume").value = c.chapters_per_volume ?? 20;
+  $("#nc-words-per-chapter").value = c.words_per_chapter ?? 3000;
+  $("#nc-summary-max-chars").value = c.summary_max_chars ?? 400;
+  $("#nc-plot-progress-max-chars").value = c.plot_progress_max_chars ?? 2000;
+  $("#nc-prev-chapter-summary-chars").value = c.prev_chapter_summary_chars ?? 600;
+}
+
+function readNovelConfigForm() {
+  return {
+    language: $("#nc-language").value.trim(),
+    scale: $("#nc-scale").value,
+    target_chapters: parseInt($("#nc-target-chapters").value, 10),
+    chapters_per_volume: parseInt($("#nc-chapters-per-volume").value, 10),
+    words_per_chapter: parseInt($("#nc-words-per-chapter").value, 10),
+    summary_max_chars: parseInt($("#nc-summary-max-chars").value, 10),
+    plot_progress_max_chars: parseInt($("#nc-plot-progress-max-chars").value, 10),
+    prev_chapter_summary_chars: parseInt($("#nc-prev-chapter-summary-chars").value, 10),
+  };
+}
+
+async function saveNovelConfig() {
+  if (!currentProject) return;
+  try {
+    const body = readNovelConfigForm();
+    await api(`/api/projects/${currentProject}/novel-config`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    });
+    toast("小说参数已保存");
+    await refreshProjectData(currentProject);
+    await loadProjects();
+  } catch (e) {
+    toast(e.message, true);
   }
 }
 
@@ -335,6 +379,7 @@ $("#btn-preview-stage-from-drawer").onclick = async () => {
 };
 
 $("#btn-save-idea").onclick = saveIdea;
+$("#btn-save-novel-config").onclick = saveNovelConfig;
 
 $("#btn-quickstart").onclick = async () => {
   if (!currentProject) return;

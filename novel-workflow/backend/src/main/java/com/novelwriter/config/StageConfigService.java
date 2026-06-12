@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 加载 stages.yaml / config.yaml，与 Python config.py 对齐。
+ * 加载 stages.yaml / config.yaml。
  */
 @Slf4j
 @Component
@@ -79,6 +79,10 @@ public class StageConfigService {
     }
 
     public int getTargetChapters() {
+        return getDefaultTargetChapters();
+    }
+
+    public int getDefaultTargetChapters() {
         Object novel = appConfig.get("novel");
         if (novel instanceof Map) {
             Object tc = ((Map<?, ?>) novel).get("target_chapters");
@@ -87,6 +91,45 @@ public class StageConfigService {
             }
         }
         return defaultTargetChapters;
+    }
+
+    /**
+     * 新建项目时的默认小说参数（config.yaml 中 project / novel / context）。
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getDefaultNovelConfig() {
+        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
+        Object project = appConfig.get("project");
+        if (project instanceof Map) {
+            Object lang = ((Map<?, ?>) project).get("language");
+            if (lang != null) {
+                defaults.put("language", String.valueOf(lang));
+            }
+        }
+        Object novel = appConfig.get("novel");
+        if (novel instanceof Map) {
+            Map<String, Object> novelMap = (Map<String, Object>) novel;
+            defaults.put("scale", novelMap.getOrDefault("scale", "long"));
+            defaults.put("target_chapters", novelMap.getOrDefault("target_chapters", defaultTargetChapters));
+            defaults.put("chapters_per_volume", novelMap.getOrDefault("chapters_per_volume", 20));
+            defaults.put("words_per_chapter", novelMap.getOrDefault("words_per_chapter", 3000));
+        }
+        Object context = appConfig.get("context");
+        if (context instanceof Map) {
+            Map<String, Object> ctxMap = (Map<String, Object>) context;
+            defaults.put("summary_max_chars", ctxMap.getOrDefault("summary_max_chars", 400));
+            defaults.put("plot_progress_max_chars", ctxMap.getOrDefault("plot_progress_max_chars", 2000));
+            defaults.put("prev_chapter_summary_chars", ctxMap.getOrDefault("prev_chapter_summary_chars", 600));
+        }
+        defaults.putIfAbsent("language", "zh-CN");
+        defaults.putIfAbsent("scale", "long");
+        defaults.putIfAbsent("target_chapters", defaultTargetChapters);
+        defaults.putIfAbsent("chapters_per_volume", 20);
+        defaults.putIfAbsent("words_per_chapter", 3000);
+        defaults.putIfAbsent("summary_max_chars", 400);
+        defaults.putIfAbsent("plot_progress_max_chars", 2000);
+        defaults.putIfAbsent("prev_chapter_summary_chars", 600);
+        return defaults;
     }
 
     public static final Map<String, String> STAGE_LABELS = buildStageLabels();

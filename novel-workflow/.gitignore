@@ -3,4 +3,7 @@ backend/target/
 backend/.idea/
 *.iml
 node_modules/
+.venv/
+__pycache__/
+*.py[cod]
 projects/*/meta/logs/

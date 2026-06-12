@@ -1,5 +1,5 @@
 # 小说 Prompt 工作流配置（API 模式）
-# 新建项目：Copy-Item -Recurse projects\_template projects\my_novel
+# novel / context / project.language 为「新建项目」默认值；每本小说独立配置存 MySQL nw_project，Web 工作流页可改
 
 project:
   default_id: "my_novel"

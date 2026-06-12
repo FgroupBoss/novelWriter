@@ -13,8 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 解析 ===FILE:path=== ... ===END=== 格式的模型输出。
- * 与 Python parser.py 对齐，含多级降级策略。
+ * 解析 LLM 返回的 ===FILE:path=== ... ===END=== 块，含多级降级策略。
  */
 @Slf4j
 @Service
