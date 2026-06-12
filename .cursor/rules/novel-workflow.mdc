@@ -1,0 +1,73 @@
+---
+description: 小说 Prompt 工作流（Spring Boot + Web 控制台）
+globs:
+  - novel-workflow/**
+---
+
+# 小说 Prompt 工作流
+
+## 技术栈
+
+- **后端**：Spring Boot 2.7 单体（`novel-workflow/backend/`），MyBatis-Plus + Flyway + MySQL
+- **前端**：静态页（`novel-workflow/frontend/static/`，HTML/CSS/JS），Nginx 反代 `/api`
+- **部署**：`docker-compose.yml`（mysql + backend + frontend）
+
+## 启动
+
+```powershell
+cd novel-workflow
+copy .env.example .env
+docker compose up -d --build
+```
+
+浏览器 **http://localhost:8765**；LLM API Key / Base URL / Model 在 Web **设置** 页保存（`nw_settings`）。
+
+本地开发后端（需 MySQL）：
+
+```powershell
+cd novel-workflow/backend
+mvn spring-boot:run
+```
+
+## 目录与核心模块
+
+| 路径 | 说明 |
+|------|------|
+| `backend/src/main/resources/stages.yaml` | 阶段 → 上下文/输出/Prompt 映射 |
+| `backend/src/main/resources/config.yaml` | 系统默认配置（新建项目默认值） |
+| `backend/src/main/resources/prompts/` | Prompt 模板 |
+| `backend/src/main/resources/_template/` | 新建项目文档模板 |
+| `projects/demo_novel/` | 示例数据（首次启动可导入 MySQL） |
+
+**Service 分层**（`com.novelwriter.service`）：
+
+- `ContextAssemblyService` — 按阶段组装最小上下文（前缀缓存友好顺序）
+- `StageRunnerService` / `JobRunner` / `JobService` — 阶段执行与后台任务
+- `FileBlockParserService` — 解析 `===FILE:path===` … `===END===`
+- `DocumentService` — 项目 Markdown/JSON 读写（`nw_document`）
+- `WorkflowStateService` — `workflow_state.json` 与 `nw_project` 同步
+- `NovelConfigService` — 每本小说独立参数（`nw_project` 列，Web 可改）
+- `ProjectService` — 项目 CRUD
+- `SettingsService` — LLM 连接配置
+
+**Controller**：`ProjectController`、`RunController`、`ArtifactController`、`ConfigController`
+
+## 配置约定
+
+- **全局默认**：`config.yaml` 中 `project` / `novel` / `context` 仅作新建项目默认值
+- **按小说维度**：目标章数、分卷、字数、上下文截断长度等存 `nw_project`，API：
+  - `GET/PUT /api/projects/{id}/novel-config`
+- **阶段白名单**：以 `stages.yaml` 为准，正文阶段不加载全书
+
+## 工作流原则
+
+- 上下文由 `stages.yaml` + `ContextAssemblyService` 自动加载；用户消息结构：**上下文块 → 当前任务 → 输出模板**（动态内容置后，利于 DeepSeek prefix cache）
+- LLM 任务异步执行，前端轮询 `/api/jobs` 查看进度
+- 模型输出须用 FILE 块：`===FILE:path===` … `===END===`；原始回复存 `meta/logs/{stage}_raw.md`
+- 统一异常：`AssistException`；统一返回：`ResponseVO`（若 Controller 已采用）
+
+## 修改时注意
+
+- 新增/调整阶段：同步改 `stages.yaml`、对应 `prompts/*.md`、前端 `app.js` 阶段标签（或 `/api/config` 的 `stage_labels`）
+- 数据库变更：新增 Flyway 脚本 `backend/src/main/resources/db/migration/V{n}__*.sql`
+- 勿引入 Python 脚本或 `web/app.py` 等旧栈路径；本项目已无 CLI 备用入口
