@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,7 +26,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WorkflowStateService {
 
-    private static final DateTimeFormatter ISO_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static final ZoneId BEIJING = ZoneId.of("Asia/Shanghai");
+    private static final DateTimeFormatter ISO_FORMAT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     private final ProjectMapper projectMapper;
     private final StageConfigService stageConfigService;
@@ -47,7 +50,7 @@ public class WorkflowStateService {
     @Transactional
     public void saveState(String projectId, Map<String, Object> state) {
         ProjectEntity project = requireProject(projectId);
-        state.put("last_updated", ISO_FORMAT.format(LocalDateTime.now(ZoneOffset.UTC)));
+        state.put("last_updated", ZonedDateTime.now(BEIJING).format(ISO_FORMAT));
         try {
             project.setStateJson(objectMapper.writeValueAsString(state));
             project.setCurrentStage(String.valueOf(state.getOrDefault("current_stage", "idea")));

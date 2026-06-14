@@ -15,6 +15,7 @@ spring:
     baseline-on-migrate: true
   jackson:
     default-property-inclusion: non_null
+    time-zone: Asia/Shanghai
 
 mybatis-plus:
   configuration:

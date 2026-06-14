@@ -1,5 +1,6 @@
 package com.novelwriter.service;
 
+import com.novelwriter.common.AssistException;
 import com.novelwriter.config.StageConfigService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class JobExecutorService {
         JobContext ctx = new JobContext(jobId, projectId, jobService);
         TaskPayload payload = jobService.loadPayload(jobId);
         List<ExecutionStep> steps = expandSteps(payload);
+        log.info("任务步骤已展开 jobId={} kind={} stepCount={}", jobId, payload.getKind(), steps.size());
 
         int resumeFrom = jobMap.get("progress_step") != null ? ((Number) jobMap.get("progress_step")).intValue() : 0;
         if (resumeFrom >= steps.size()) {
@@ -171,11 +173,17 @@ public class JobExecutorService {
             }
             return steps;
         }
-
-        for (String s : stageConfigService.getSetupOrder()) {
-            steps.add(step("setup", s, null, false, label(s)));
+        if ("setup_all".equals(kind)) {
+            for (String s : stageConfigService.getSetupOrder()) {
+                steps.add(step("setup", s, null, false, label(s)));
+            }
+            return steps;
         }
-        return steps;
+
+        log.error("无法展开任务步骤 kind={} stage={} chapter={} from={} to={}",
+                kind, payload.getStage(), payload.getChapter(),
+                payload.getFromChapter(), payload.getToChapter());
+        throw new AssistException("无效的任务参数，无法展开执行步骤: kind=" + kind);
     }
 
     private ExecutionStep step(String kind, String stageId, Integer chapter, boolean chapterStage, String label) {

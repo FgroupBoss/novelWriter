@@ -34,6 +34,7 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123456}
       NOVEL_IMPORT_DEMO_PATH: /data/demo_novel
+      TZ: Asia/Shanghai
     volumes:
       - ./projects/demo_novel:/data/demo_novel:ro
     expose:

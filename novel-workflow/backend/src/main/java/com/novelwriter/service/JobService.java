@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -56,8 +58,22 @@ public class JobService {
         }
         pauseFlags.remove(id);
         jobMapper.insert(job);
-        jobRunner.execute(id);
+        scheduleExecution(id);
         return id;
+    }
+
+    /** 事务提交后再异步执行，避免 @Async 线程读不到未提交的 job 记录。 */
+    private void scheduleExecution(String jobId) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    jobRunner.execute(jobId);
+                }
+            });
+        } else {
+            jobRunner.execute(jobId);
+        }
     }
 
     public boolean isPauseRequested(String jobId) {
@@ -114,7 +130,7 @@ public class JobService {
         pauseFlags.remove(jobId);
         jobMapper.updateById(job);
         appendLog(jobId, "任务已继续");
-        jobRunner.execute(jobId);
+        scheduleExecution(jobId);
         return true;
     }
 
@@ -169,10 +185,9 @@ public class JobService {
             return TaskPayload.builder().build();
         }
         try {
-            Map<String, Object> map = objectMapper.readValue(job.getTaskPayloadJson(),
-                    new TypeReference<Map<String, Object>>() {});
-            return TaskPayload.fromMap(map);
+            return objectMapper.readValue(job.getTaskPayloadJson(), TaskPayload.class);
         } catch (Exception e) {
+            log.warn("任务 payload 反序列化失败 jobId={}", jobId, e);
             return TaskPayload.builder().build();
         }
     }

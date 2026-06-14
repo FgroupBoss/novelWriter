@@ -45,6 +45,7 @@ public class StageRunnerService {
         if (chapter < 1) {
             throw new AssistException("章节号须 >= 1");
         }
+        documentService.ensureProjectBootstrapFiles(projectId);
         List<String> outputFiles = contextAssemblyService.resolveOutputFiles(stageName, chapter, true);
         return execute(projectId, stageName, outputFiles, chapter, true, dryRun, ctx);
     }

@@ -156,10 +156,11 @@ public class DocumentService {
         }
     }
 
-    /** 补种 context_index 等关键 meta 文件。 */
+    /** 补种设定/正文阶段依赖、但可能未从模板入库的关键文件。 */
     @Transactional
     public void ensureProjectBootstrapFiles(String projectId) {
         ensureBootstrapDocument(projectId, "meta/context_index.md", "_template/meta/context_index.md");
+        ensureBootstrapDocument(projectId, "10_plot_progress.md", "_template/10_plot_progress.md");
     }
 
     public List<DocumentEntity> listByProject(String projectId) {
